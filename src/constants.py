@@ -1,8 +1,12 @@
 from datetime import date
+from pathlib import Path
 
-from ochanticipy import CodAB, GeoBoundingBox, create_country_config
+from ochanticipy import CodAB, GeoBoundingBox, create_custom_country_config
 
-country_config = create_country_config(iso3="bgd")
+country_config = create_custom_country_config(
+    Path(__file__).parent.resolve() / "bgd.yaml"
+)
+
 leadtime_max = 15
 
 codab = CodAB(country_config=country_config)

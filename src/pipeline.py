@@ -3,7 +3,6 @@ import logging
 from ochanticipy import (
     CodAB,
     GeoBoundingBox,
-    GlofasForecast,
     GlofasReanalysis,
     GlofasReforecast,
 )
@@ -11,6 +10,7 @@ from ochanticipy import (
 from src import constants
 
 logging.basicConfig(level=logging.INFO)
+clobber = True
 
 
 codab = CodAB(country_config=constants.country_config)
@@ -25,7 +25,7 @@ glofas_reforecast = GlofasReforecast(
     leadtime_max=constants.leadtime_max,
 )
 glofas_reforecast.download()
-glofas_reforecast.process()
+glofas_reforecast.process(clobber=clobber)
 
 glofas_reanalysis = GlofasReanalysis(
     country_config=constants.country_config,
@@ -33,12 +33,12 @@ glofas_reanalysis = GlofasReanalysis(
     end_date=constants.reanalysis_end_date,
 )
 glofas_reanalysis.download()
-glofas_reanalysis.process()
+glofas_reanalysis.process(clobber=clobber)
 
-glofas_forecast = GlofasForecast(
-    country_config=constants.country_config,
-    geo_bounding_box=geo_bounding_box,
-    leadtime_max=constants.leadtime_max,
-)
-glofas_forecast.download()
-glofas_forecast.process()
+# glofas_forecast = GlofasForecast(
+#     country_config=constants.country_config,
+#     geo_bounding_box=geo_bounding_box,
+#     leadtime_max=constants.leadtime_max,
+# )
+# glofas_forecast.download()
+# glofas_forecast.process()
