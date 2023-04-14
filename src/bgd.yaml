@@ -1,0 +1,88 @@
+iso3: bgd
+codab:
+  hdx_dataset_name: bgd_adm_bbs_20201113_SHP.zip
+  layer_base_name: bgd_adm_bbs_20201113_SHP/bgd_admbnda_adm{admin_level}_bbs_20201113.shp
+  admin_level_max: 4
+glofas:
+  reporting_points:
+  - name: Bahadurabad
+    lon: 89.65
+    lat: 25.15
+  - name: Bhairab Bazar
+    lon: 90.95
+    lat: 24.05
+  - name: Hardinge Bridge
+    lon: 89.05
+    lat: 24.05
+  - name: Jariajanjail
+    lon: 90.65
+    lat: 24.95
+  - name: Kanaighat
+    lon: 92.15
+    lat: 25.05
+  - name: Kaunia
+    lon: 89.45
+    lat: 25.75
+  - name: Laurergarh Saktiarkhola
+    lon: 91.25
+    lat: 25.15
+  - name: Na
+    lon: 89.75
+    lat: 25.55
+  - name: Sherpur
+    lon: 91.65
+    lat: 24.65
+  - name: Sunamganj
+    lon: 91.45
+    lat: 25.05
+  - name: Noonkhawa
+    lat: 25.919
+    lon: 89.7700
+  - name: Dalia
+    lat: 26.176
+    lon: 89.0499
+  - name: Panchagarh
+    lat: 26.3311
+    lon: 88.5541
+  - name: Dinajpur
+    lat: 25.6164
+    lon: 88.6200
+  - name: Kurigram
+    lat: 25.8199
+    lon: 89.6700
+  - name: Badarganj
+    lat: 25.6824
+    lon: 89.0761
+  - name: Pankha
+    lat: 24.6411
+    lon: 88.1583
+  - name: Rohanpur
+    lat: 24.8234
+    lon: 88.3190
+  - name: Nakuagaon
+    lat: 25.190
+    lon: 90.2160
+  - name: Durgapur
+    lat: 25.112
+    lon: 90.6691
+  - name: Sarighat
+    lat: 25.0935
+    lon: 92.1180
+  - name: Amalshid
+    lat: 24.872
+    lon: 92.4856
+  - name: Manu-RB
+    lat: 24.4940
+    lon: 91.7739
+  - name: Lourergorh
+    lat: 25.1917
+    lon: 91.2511
+  - name: Comilla
+    lat: 23.4704
+    lon: 91.2027
+  - name: Faridpur
+    lat: 23.6034
+    lon: 89.8293
+  - name: Gaibandha
+    lat: 25.3384
+    lon: 89.5480
