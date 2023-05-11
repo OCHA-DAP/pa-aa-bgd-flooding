@@ -1,7 +1,15 @@
-# FFWC Enhancement
+# Bangladesh Anticipatory Action: flooding
 
-This repository contains the code used to support the
-analysis for enhancement of the FFWC hydrological forecasts.
+[![Generic badge](https://img.shields.io/badge/STATUS-ENDORSED-%231EBFB3)](https://shields.io/)
+
+## Background information
+
+Thie repository contains analysis for the 2023 
+trigger, and for research to enhance the performance
+of the FFWC forecast. 
+
+For the 2020-2022 trigger analysis work see 
+[here](https://github.com/OCHA-DAP/pa-anticipatory-action/tree/develop/analyses/bgd).
 
 ## Directory structure
 
@@ -22,7 +30,7 @@ The code in this repository is organized as follows:
 
 Create a directory where you would like the data to be stored,
 and point to it using an environment variable called
-`FFWC_DATA_DIR`.
+`OAP_DATA_DIR`.
 
 Next create a new virtual environment and install the requirements with:
 
