@@ -128,12 +128,23 @@ def get_dates_list_from_data_array(
     considered an event
     :return: List of event dates
     """
+    try:
+        da_input = da.to_masked_array()
+        date_array = da.time
+    except AttributeError:
+        da_input = da
+        date_array = da.index
     groups = get_groups_above_threshold(
-        observations=da.to_masked_array(),
+        observations=da_input,
         threshold=threshold,
         min_duration=min_duration,
     )
-    return [da.time[group[0] + min_duration - 1].data for group in groups]
+    try:
+        return [
+            date_array[group[0] + min_duration - 1].data for group in groups
+        ]
+    except AttributeError:
+        return [date_array[group[0] + min_duration - 1] for group in groups]
 
 
 def get_detection_stats(
@@ -163,8 +174,12 @@ def get_detection_stats(
     # Loop through the forecasted event
     for forecasted_event in forecasted_event_dates:
         # Calculate the offset from the true dates
-        days_offset = (true_event_dates - forecasted_event) / np.timedelta64(
-            1, "D"
+        days_offset = np.array(
+            [
+                (np.array(true_event_date) - np.array(forecasted_event))
+                / np.timedelta64(1, "D")
+                for true_event_date in true_event_dates
+            ]
         )
         # Calculate which true events were detected by this forecast event
         detected = (days_offset >= -1 * days_before_buffer) & (
