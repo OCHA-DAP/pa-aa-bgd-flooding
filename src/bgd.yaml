@@ -86,3 +86,6 @@ glofas:
   - name: Gaibandha
     lat: 25.3384
     lon: 89.5480
+  - name: Goalando
+    lat: 23.76775
+    lon: 89.77873
