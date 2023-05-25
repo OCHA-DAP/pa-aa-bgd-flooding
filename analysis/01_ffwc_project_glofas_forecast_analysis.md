@@ -16,13 +16,6 @@ from src import utils
 ```
 
 ```python
-# Delete after development
-from importlib import reload
-
-reload(utils)
-```
-
-```python
 # This is to avoid error with dask
 import os
 
