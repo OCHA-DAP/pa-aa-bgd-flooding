@@ -3,7 +3,7 @@
 Looking at FFWC water level and discharge at Goalanda
 and comparing to GloFAS
 
-To run this notebook for another location, first add the location to `bgd.yaml` file with location name and coordinates then reun pipeline.py to download and process GloFAS data needed for any further analysis.
+To run this notebook for another location, first add the location to `bgd.yaml` file with location name and coordinates then rerun pipeline.py to download and process GloFAS data needed for any further analysis.
 
 ```python
 %load_ext jupyter_black
