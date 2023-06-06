@@ -45,6 +45,7 @@ ds_ra = utils.load_glofas_reanalysis()
 
 ```python
 # FFWC data
+output_dir = Path(os.environ["OAP_DATA_DIR"]) / "private/exploration/bgd/"
 ffwc_data_dir = (
     Path(os.environ["OAP_DATA_DIR"]) / "private/exploration/bgd/FFWC_Data"
 )
@@ -192,6 +193,10 @@ padma_gf_rp = utils.get_return_period_function_analytical(
 ```
 
 ```python
+padma_gf_rp
+```
+
+```python
 df_station_stats = pd.DataFrame()
 for lead_time in da_rf_g["step"].values:
     # Get the forecast at a specific lead time
@@ -229,6 +234,424 @@ for lead_time in da_rf_g["step"].values:
     )
 df_station_stats = utils.get_more_detection_stats(df_station_stats)
 df_station_stats
+```
+
+```python
+df_station_stats.to_csv(
+    output_dir / "Goalando GloFAS Model vs Forecast Detection Stats.csv",
+    index=False,
+)
+```
+
+### Bahadurabad
+
+```python
+station = "Bahadurabad"
+# Interpolate the reforecast
+da_rf_b.values = np.sort(da_rf_b.values, axis=0)
+
+da_rf_interp_b = da_rf_b.interp(
+    time=pd.date_range(da_rf_b.time.min().values, da_rf_b.time.max().values),
+    method="linear",
+)
+# Get the median
+da_rf_med_b = da_rf_interp_b.median(axis=0)
+rp_target = 5  # 1 in 5 year
+b_gf_rp = utils.get_return_period_function_analytical(
+    df_rp=utils.get_return_period_df(ds_ra, station),
+    rp_var="discharge",
+    show_plots=False,
+)(rp_target)
+```
+
+```python
+df_station_stats = pd.DataFrame()
+for lead_time in da_rf_b["step"].values:
+    # Get the forecast at a specific lead time
+    forecast = da_rf_med_b.sel(step=lead_time, method="nearest")
+    # Shift the time variable of the forecast to match the date of the event
+    forecast["time"] = forecast.time.values + lead_time
+    # Limit the observations to the forecast time
+    model = da_ra_b.reindex(time=forecast.time)
+    # Get the dates for each
+    model_dates = utils.get_dates_list_from_data_array(
+        model, b_gf_rp, min_duration=min_duration
+    )
+    forecast_dates = utils.get_dates_list_from_data_array(
+        forecast, b_gf_rp, min_duration=min_duration
+    )
+    # Match the dates to events
+    detection_stats = utils.get_detection_stats(
+        true_event_dates=model_dates,
+        forecasted_event_dates=forecast_dates,
+        days_before_buffer=days_before_buffer,
+        days_after_buffer=days_after_buffer,
+    )
+    df_station_stats = pd.concat(
+        (
+            df_station_stats,
+            pd.DataFrame(
+                {
+                    **{"station": station, "leadtime": lead_time},
+                    **detection_stats,
+                },
+                index=[0],
+            ),
+        ),
+        ignore_index=True,
+    )
+df_station_stats = utils.get_more_detection_stats(df_station_stats)
+df_station_stats
+```
+
+```python
+df_station_stats.to_csv(
+    output_dir / "Bahadurabad GloFAS Model vs Forecast Detection Stats.csv",
+    index=False,
+)
+```
+
+### Hardinge Bridge
+
+```python
+station = "Hardinge Bridge"
+# Interpolate the reforecast
+da_rf_h.values = np.sort(da_rf_h.values, axis=0)
+
+da_rf_interp_h = da_rf_h.interp(
+    time=pd.date_range(da_rf_h.time.min().values, da_rf_h.time.max().values),
+    method="linear",
+)
+# Get the median
+da_rf_med_h = da_rf_interp_h.median(axis=0)
+rp_target = 5  # 1 in 5 year
+h_gf_rp = utils.get_return_period_function_analytical(
+    df_rp=utils.get_return_period_df(ds_ra, station),
+    rp_var="discharge",
+    show_plots=False,
+)(rp_target)
+```
+
+```python
+df_station_stats = pd.DataFrame()
+for lead_time in da_rf_h["step"].values:
+    # Get the forecast at a specific lead time
+    forecast = da_rf_med_h.sel(step=lead_time, method="nearest")
+    # Shift the time variable of the forecast to match the date of the event
+    forecast["time"] = forecast.time.values + lead_time
+    # Limit the observations to the forecast time
+    model = da_ra_h.reindex(time=forecast.time)
+    # Get the dates for each
+    model_dates = utils.get_dates_list_from_data_array(
+        model, h_gf_rp, min_duration=min_duration
+    )
+    forecast_dates = utils.get_dates_list_from_data_array(
+        forecast, h_gf_rp, min_duration=min_duration
+    )
+    # Match the dates to events
+    detection_stats = utils.get_detection_stats(
+        true_event_dates=model_dates,
+        forecasted_event_dates=forecast_dates,
+        days_before_buffer=days_before_buffer,
+        days_after_buffer=days_after_buffer,
+    )
+    df_station_stats = pd.concat(
+        (
+            df_station_stats,
+            pd.DataFrame(
+                {
+                    **{"station": station, "leadtime": lead_time},
+                    **detection_stats,
+                },
+                index=[0],
+            ),
+        ),
+        ignore_index=True,
+    )
+df_station_stats = utils.get_more_detection_stats(df_station_stats)
+df_station_stats
+```
+
+```python
+df_station_stats.to_csv(
+    output_dir
+    / "Hardinge Bridge GloFAS Model vs Forecast Detection Stats.csv",
+    index=False,
+)
+```
+
+### Comparing Goalando vs sum of Hardinge Bridge and Bahadurabad
+
+```python
+df_comb = da_ra_g.to_dataframe().merge(
+    da_ra_h.to_dataframe(), left_index=True, right_index=True
+)
+df_comb["Lagged Hardinge Bridge"] = df_comb["Hardinge Bridge"].shift(1)
+df_comb = df_comb.merge(
+    da_ra_b.to_dataframe(), left_index=True, right_index=True
+)
+df_comb["Lagged Bahadurabad"] = df_comb["Bahadurabad"].shift(2)
+df_comb["discharge"] = df_comb[
+    ["Lagged Hardinge Bridge", "Lagged Bahadurabad"]
+].sum(axis=1, skipna=True)
+df_comb
+```
+
+```python
+ds_comb = df_comb[["discharge"]].to_xarray()
+```
+
+```python
+station = "Hardinge Bridge/Bahadurabad"
+rp_target = 5  # 1 in 5 year
+comb_gf_rp = utils.get_return_period_function_analytical(
+    df_rp=utils.get_return_period_df(ds_comb, "discharge"),
+    rp_var="discharge",
+    show_plots=False,
+)(rp_target)
+```
+
+```python
+comb_gf_rp
+```
+
+```python
+df_station_stats = pd.DataFrame()
+# Get the model
+baseline = df_comb["Goalando"]
+# Limit the observations to the forecast time
+test = df_comb["discharge"]
+# Get the dates for each
+baseline_dates = utils.get_dates_list_from_data_array(
+    baseline, padma_gf_rp, min_duration=min_duration
+)
+test_dates = utils.get_dates_list_from_data_array(
+    test, comb_gf_rp, min_duration=min_duration
+)
+# Match the dates to events
+detection_stats = utils.get_detection_stats(
+    true_event_dates=baseline_dates,
+    forecasted_event_dates=test_dates,
+    days_before_buffer=days_before_buffer,
+    days_after_buffer=days_after_buffer,
+)
+df_station_stats = pd.concat(
+    (
+        df_station_stats,
+        pd.DataFrame(
+            {
+                **{
+                    "station": "Goalando vs Hardinge Bridge(-1)+Bahadurabad(-2)"
+                },
+                **detection_stats,
+            },
+            index=[0],
+        ),
+    ),
+    ignore_index=True,
+)
+df_station_stats = utils.get_more_detection_stats(df_station_stats)
+df_station_stats
+```
+
+```python
+baseline_dates
+```
+
+```python
+test_dates
+```
+
+```python
+df_station_stats = pd.DataFrame()
+for lead_time in da_rf_g["step"].values:
+    # Get the forecast at a specific lead time
+    forecast = da_rf_med_g.sel(step=lead_time, method="nearest")
+    # Shift the time variable of the forecast to match the date of the event
+    forecast["time"] = forecast.time.values + lead_time
+    # Limit the observations to the forecast time
+    model = ds_comb["discharge"]
+    # Get the dates for each
+    model_dates = utils.get_dates_list_from_data_array(
+        model, comb_gf_rp, min_duration=min_duration
+    )
+    forecast_dates = utils.get_dates_list_from_data_array(
+        forecast, padma_gf_rp, min_duration=min_duration
+    )
+    # Match the dates to events
+    detection_stats = utils.get_detection_stats(
+        true_event_dates=model_dates,
+        forecasted_event_dates=forecast_dates,
+        days_before_buffer=days_before_buffer,
+        days_after_buffer=days_after_buffer,
+    )
+    df_station_stats = pd.concat(
+        (
+            df_station_stats,
+            pd.DataFrame(
+                {
+                    **{
+                        "station": "Goalando vs Hardinge Bridge(-1) + Bahadurabad(-2)",
+                        "leadtime": lead_time,
+                    },
+                    **detection_stats,
+                },
+                index=[0],
+            ),
+        ),
+        ignore_index=True,
+    )
+df_station_stats = utils.get_more_detection_stats(df_station_stats)
+df_station_stats
+```
+
+```python
+df_station_stats["leadtime"] = df_station_stats["leadtime"] / np.timedelta64(
+    1, "D"
+)
+```
+
+```python
+station = "Goalando vs Hardinge Bridge(-1day) and Bahadurabad(-2day)"
+```
+
+```python
+ylim = {1.5: 36, 10: 10}
+
+df = df_station_stats.copy()
+cdict = {
+    "TP": "tab:olive",
+    "FP": "tab:orange",
+    "FN": "tab:red",
+    "POD": "tab:blue",
+    "FAR": "tab:cyan",
+}
+
+fig, ax = plt.subplots()
+ax2 = ax.twinx()
+df_station = df[df["station"] == station]
+lines1, lines2 = [], []
+for stat in ["TP", "FP", "FN"]:
+    lines1 += ax.plot(
+        df_station["leadtime"], df_station[stat], c=cdict[stat], label=stat
+    )
+for stat in ["POD", "FAR"]:
+    lines2 += ax2.plot(
+        df_station["leadtime"], df_station[stat], c=cdict[stat], label=stat
+    )
+lines = lines1 + lines2
+labels = [line.get_label() for line in lines]
+ax.legend(lines, labels)
+ax.set_ylim(-1, 10)
+ax2.set_ylim(-0.03, 1.03)
+ax.set_ylabel("Number")
+ax.set_xlabel("Lead time [days]")
+ax2.set_ylabel("POD / FAR")
+ax.set_title(f"{station}, RP = 1 in {rp_target} year")
+```
+
+```python
+df_station_stats.to_csv(
+    output_dir
+    / "GloFAS Forecast at Goalando vs Model at Hardinge Bridge and Bahadurabad Detection Stats.csv",
+    index=False,
+)
+```
+
+#### Goalando Reanalysis vs Combined Forecast
+
+```python
+da_rf_med_hb = da_rf_med_h.shift(step=1) + da_rf_med_b.shift(step=2)
+ds_g = df_comb[["Goalando"]].to_xarray()
+padma_gf_rp
+```
+
+```python
+df_station_stats = pd.DataFrame()
+for lead_time in da_rf_med_hb["step"].values:
+    # Get the forecast at a specific lead time
+    forecast = da_rf_med_hb.sel(step=lead_time, method="nearest")
+    # Shift the time variable of the forecast to match the date of the event
+    forecast["time"] = forecast.time.values + lead_time
+    # Limit the observations to the forecast time
+    model = ds_g["Goalando"]
+    # Get the dates for each
+    model_dates = utils.get_dates_list_from_data_array(
+        model, padma_gf_rp, min_duration=min_duration
+    )
+    forecast_dates = utils.get_dates_list_from_data_array(
+        forecast, padma_gf_rp, min_duration=min_duration
+    )
+    # Match the dates to events
+    detection_stats = utils.get_detection_stats(
+        true_event_dates=model_dates,
+        forecasted_event_dates=forecast_dates,
+        days_before_buffer=days_before_buffer,
+        days_after_buffer=days_after_buffer,
+    )
+    df_station_stats = pd.concat(
+        (
+            df_station_stats,
+            pd.DataFrame(
+                {
+                    **{
+                        "station": "Goalando vs Hardinge Bridge(-1) + Bahadurabad(-2)",
+                        "leadtime": lead_time,
+                    },
+                    **detection_stats,
+                },
+                index=[0],
+            ),
+        ),
+        ignore_index=True,
+    )
+df_station_stats = utils.get_more_detection_stats(df_station_stats)
+df_station_stats
+```
+
+```python
+df_station_stats["leadtime"] = df_station_stats["leadtime"] / np.timedelta64(
+    1, "D"
+)
+```
+
+```python
+station = "Goalando vs Hardinge Bridge(-1) + Bahadurabad(-2)"
+```
+
+```python
+ylim = {1.5: 36, 10: 10}
+
+df = df_station_stats.copy()
+cdict = {
+    "TP": "tab:olive",
+    "FP": "tab:orange",
+    "FN": "tab:red",
+    "POD": "tab:blue",
+    "FAR": "tab:cyan",
+}
+
+fig, ax = plt.subplots()
+ax2 = ax.twinx()
+df_station = df[df["station"] == station]
+lines1, lines2 = [], []
+for stat in ["TP", "FP", "FN"]:
+    lines1 += ax.plot(
+        df_station["leadtime"], df_station[stat], c=cdict[stat], label=stat
+    )
+for stat in ["POD", "FAR"]:
+    lines2 += ax2.plot(
+        df_station["leadtime"], df_station[stat], c=cdict[stat], label=stat
+    )
+lines = lines1 + lines2
+labels = [line.get_label() for line in lines]
+ax.legend(lines, labels)
+ax.set_ylim(-1, 10)
+ax2.set_ylim(-0.03, 1.03)
+ax.set_ylabel("Number")
+ax.set_xlabel("Lead time [days]")
+ax2.set_ylabel("POD / FAR")
+ax.set_title(f"{station}, RP = 1 in {rp_target} year")
 ```
 
 ### Comparing Goalando vs Hardinge Bridge with 1 day lag
@@ -287,7 +710,7 @@ df_station_stats = utils.get_more_detection_stats(df_station_stats)
 df_station_stats
 ```
 
-### Comparing Goalando vs Bahadarabad with 2 day lag
+### Comparing Goalando vs Bahadurabad with 2 day lag
 
 ```python
 rp_target = 5  # 1 in 5 year
