@@ -149,3 +149,6 @@ glofas:
   - name: Punarbhaba Dinajpur
     lat: 25.5500
     lon: 88.5500
+  - name: Mawa
+    lat: 23.470842
+    lon: 90.256042    

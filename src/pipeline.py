@@ -24,7 +24,7 @@ glofas_reforecast = GlofasReforecast(
     geo_bounding_box=geo_bounding_box,
     leadtime_max=constants.leadtime_max,
 )
-glofas_reforecast.download()
+# glofas_reforecast.download()
 glofas_reforecast.process(clobber=clobber)
 
 glofas_reanalysis = GlofasReanalysis(
@@ -32,7 +32,7 @@ glofas_reanalysis = GlofasReanalysis(
     geo_bounding_box=geo_bounding_box,
     end_date=constants.reanalysis_end_date,
 )
-glofas_reanalysis.download()
+# glofas_reanalysis.download()
 glofas_reanalysis.process(clobber=clobber)
 
 # glofas_forecast = GlofasForecast(
