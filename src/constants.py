@@ -1,7 +1,6 @@
 from datetime import date
 from pathlib import Path
 
-import os
 from ochanticipy import CodAB, GeoBoundingBox, create_custom_country_config
 
 country_config = create_custom_country_config(
