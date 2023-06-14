@@ -14,9 +14,12 @@ from scipy.interpolate import interp1d
 from scipy.stats import genextreme as gev
 
 from src import constants
+import geopandas as gpd 
 
 geo_bounding_box = GeoBoundingBox.from_shape(
-    CodAB(country_config=constants.country_config).load(admin_level=0)
+    gpd.read_file(
+    "zip://G:/Shared drives/Predictive Analytics/CERF Anticipatory Action/General - All AA projects/Data/public/raw/bgd/cod_ab/bgd_cod_ab.shp.zip/bgd_adm_bbs_20201113_SHP/bgd_admbnda_adm0_bbs_20201113.shp"
+)
 )
 
 

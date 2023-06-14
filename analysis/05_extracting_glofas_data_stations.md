@@ -53,42 +53,53 @@ ds_rf = utils.load_glofas_reforecast()
 ```
 
 ```python
-out_df = pd.DataFrame()
+quantile_dict = {
+    "25th percentile": 0.25,
+    "median": 0.5,
+    "75th percentile": 0.75,
+}
+```
 
-for station in stations["station name"]:
-    print("Running: " + station)
-    da_rf = ds_rf[station]
-    # Interpolate the reforecast
-    da_rf.values = np.sort(da_rf.values, axis=0)
+```python
+def get_quantile_rf(quant):
+    out_df = pd.DataFrame()
+    for station in stations["station name"]:
+        print("Running: " + station)
+        da_rf = ds_rf[station]
+        # Interpolate the reforecast
+        da_rf.values = np.sort(da_rf.values, axis=0)
 
-    da_rf_interp = da_rf.interp(
-        time=pd.date_range(da_rf.time.min().values, da_rf.time.max().values),
-        method="linear",
+        da_rf_interp = da_rf.interp(
+            time=pd.date_range(
+                da_rf.time.min().values, da_rf.time.max().values
+            ),
+            method="linear",
+        )
+        # Get the quantile
+        da_rf_med = da_rf_interp.quantile(quantile_dict[quant], dim="number")
+        station_df = pd.DataFrame()
+        for tm in da_rf_med["time"].values:
+            intern_df = pd.DataFrame()
+            intern_df["leadtime"] = (
+                (da_rf_med["step"] / (36 * 24 * 100000000000)).values
+            ).astype(int)
+            intern_df["date"] = (pd.to_datetime(str(tm))).strftime("%Y-%m-%d")
+            intern_df[station] = da_rf_med.sel(time=tm).values
+            intern_df = intern_df[["date", "leadtime", station]]
+            station_df = pd.concat([station_df, intern_df], axis=0)
+        if len(out_df) == 0:
+            out_df = station_df
+        else:
+            out_df = out_df.merge(station_df, on=["date", "leadtime"])
+    out_df.to_csv(
+        output_dir
+        / str(quant + " GloFAS Reforecast for List of Stations.csv"),
+        index=False,
     )
-    # Get the median
-    da_rf_med = da_rf_interp.median(axis=0)
-    station_df = pd.DataFrame()
-    for tm in da_rf_med["time"].values:
-        intern_df = pd.DataFrame()
-        intern_df["leadtime"] = (
-            (da_rf_med["step"] / (36 * 24 * 100000000000)).values
-        ).astype(int)
-        intern_df["date"] = (pd.to_datetime(str(tm))).strftime("%Y-%m-%d")
-        intern_df[station] = da_rf_med.sel(time=tm).values
-        intern_df = intern_df[["date", "leadtime", station]]
-        station_df = pd.concat([station_df, intern_df], axis=0)
-    if len(out_df) == 0:
-        out_df = station_df
-    else:
-        out_df = out_df.merge(station_df, on=["date", "leadtime"])
 ```
 
 ```python
-out_df
-```
-
-```python
-out_df.to_csv(
-    output_dir / "GloFAS Reforecast for List of Stations.csv", index=False
-)
+get_quantile_rf("25th percentile")
+get_quantile_rf("median")
+get_quantile_rf("75th percentile")
 ```
