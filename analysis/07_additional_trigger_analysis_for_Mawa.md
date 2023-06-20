@@ -50,7 +50,7 @@ ffwc_data_dir = (
 padma_ffwc = pd.read_excel(
     ffwc_data_dir / "Water LevelSW91.9R13529.xlsx", skiprows=9
 )
-jamuna_ffwc_dir = ffwc_data_dir = (
+jamuna_ffwc_dir = (
     Path(os.environ["AA_DATA_DIR"]) / "private/exploration/bgd/ffwc"
 )
 jamuna_ffwc = pd.read_excel(ffwc_data_dir / "SW46.9L_19-11-2020.xlsx")
