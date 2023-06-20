@@ -175,6 +175,14 @@ mawa_gf_rp = utils.get_return_period_function_analytical(
 ```
 
 ```python
+goalando_gf_rp
+```
+
+```python
+mawa_gf_rp
+```
+
+```python
 glofas_comb = pd.merge(
     da_ra_g.to_dataframe(),
     da_ra_m.to_dataframe(),
@@ -231,7 +239,54 @@ detection_stats
 ## Comparing FFWC events between Bahadurabad and Mawa
 
 ```python
-bahadurabad_dl = 
-mawa_dl = 
+bahadurabad_dl = 19.5
+mawa_dl = 6.11
 
+bahadurabad_trigger = bahadurabad_dl + 0.85
+mawa_trigger = mawa_dl + 0.5
+```
+
+```python
+bahadurabad_ffwc = jamuna_ffwc["observed"]
+mawa_ffwc = padma_ffwc.set_index("DATE/TIME")["AVE_WL(m)"]
+```
+
+```python
+# Get the dates for each
+bahadurabad_dates = utils.get_dates_list_from_data_array(
+    bahadurabad_ffwc, bahadurabad_trigger, min_duration=min_duration
+)
+mawa_dates = utils.get_dates_list_from_data_array(
+    mawa_ffwc, mawa_trigger, min_duration=min_duration
+)
+```
+
+```python
+bahadurabad_dates
+```
+
+```python
+mawa_dates
+```
+
+```python
+# Match the dates to events
+detection_stats = utils.get_detection_stats(
+    true_event_dates=bahadurabad_dates,
+    forecasted_event_dates=mawa_dates,
+    days_before_buffer=days_before_buffer,
+    days_after_buffer=days_after_buffer,
+)
+detection_stats
+```
+
+```python
+# Match the dates to events
+detection_stats = utils.get_detection_stats(
+    true_event_dates=mawa_dates,
+    forecasted_event_dates=bahadurabad_dates,
+    days_before_buffer=days_before_buffer,
+    days_after_buffer=days_after_buffer,
+)
+detection_stats
 ```
