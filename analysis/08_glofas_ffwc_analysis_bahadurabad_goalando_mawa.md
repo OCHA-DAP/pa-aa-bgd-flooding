@@ -1,22 +1,8 @@
----
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.14.5
-  kernelspec:
-    display_name: bgdenv
-    language: python
-    name: python3
----
 
 # Analysis of Goalando, Bahadurabad and Mawa Stations
 
 - Comparing GloFAS events between Goalando and Mawa
-- Comparing FFWC events between Bahadurabad and Mawa 
-
+- Comparing FFWC events between Bahadurabad and Mawa
 
 ```python
 %load_ext jupyter_black

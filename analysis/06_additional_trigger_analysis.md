@@ -1,25 +1,18 @@
----
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.14.5
-  kernelspec:
-    display_name: bgdenv
-    language: python
-    name: python3
----
 
 # Additional Analysis Requested by Hassan
 
-
 This notebook covers 3 analyses requested by Hassan for the trigger.
 
-- The FAR and POD calculated at Bahadurabad, Hardinge Bridge, and Goalando, in Excel file form. Note that for Goalando he wants us to compute it by (1) a point on the GloFAS raster, (2) by combining the discharge at Hardinge bridge with 1 day lag time with that at Bahadurabad with 2 day lag time
-- Calculate the probability of flooding at Bahadurabad if there is flooding at Goalando, and vice versa
-- Calculate 1-in-5 and 1-in-10 year RPs at Goalando for both GloFAS and FFWC data
+- The FAR and POD calculated at Bahadurabad, Hardinge Bridge,
+and Goalando, in Excel file form. Note that for Goalando he wants us
+to compute it by
+(1) a point on the GloFAS raster,
+(2) by combining the discharge at Hardinge bridge
+with 1 day lag time with that at Bahadurabad with 2 day lag time
+- Calculate the probability of flooding at Bahadurabad
+if there is flooding at Goalando, and vice versa
+- Calculate 1-in-5 and 1-in-10 year RPs at Goalando
+for both GloFAS and FFWC data
 
 ```python
 %load_ext jupyter_black
@@ -553,7 +546,8 @@ ax.set_title(f"{station}, RP = 1 in {rp_target} year")
 ```python
 df_station_stats.to_csv(
     output_dir
-    / "GloFAS Forecast at Goalando vs Model at Hardinge Bridge and Bahadurabad Detection Stats.csv",
+    / "GloFAS Forecast at Goalando vs Model at " +
+    "Hardinge Bridge and Bahadurabad Detection Stats.csv",
     index=False,
 )
 ```
@@ -773,7 +767,7 @@ da_ra_g = ds_ra["Goalando"]
 da_ra_b = ds_ra["Bahadurabad"]
 ```
 
-### The GloFAS model 1-in-5 year RP.
+### The GloFAS model 1-in-5 year RP
 
 ```python
 rp_target = 5  # 1 in 5 year
@@ -855,11 +849,10 @@ detection_stats
 detection_stats["TP"] / len(padma_dates)
 ```
 
-### The FFWC events with danger level specified.
+### The FFWC events with danger level specified
 
 - Jamuna: 19.5 + 0.85
 - Padma: 8.66 + 1
-
 
 ```python
 jamuna_dl = 19.5 + 0.85
@@ -897,7 +890,7 @@ padma_dates
 jamuna_dates
 ```
 
-#### Event in Padma given event in Jamuna
+#### Event in Padma given events in Jamuna
 
 ```python
 # Match the dates to events
@@ -914,7 +907,7 @@ detection_stats
 detection_stats["TP"] / len(jamuna_dates)
 ```
 
-#### Event in Jamuna given event in Padma
+#### Event in Jamuna given events in Padma
 
 ```python
 # Match the dates to events
@@ -932,7 +925,6 @@ detection_stats["TP"] / len(padma_dates)
 ```
 
 ## RP for FFWC and GloFAS Reanalysis
-
 
 ### GloFAS Reanalysis
 

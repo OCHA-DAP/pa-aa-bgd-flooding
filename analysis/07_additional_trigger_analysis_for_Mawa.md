@@ -1,21 +1,7 @@
----
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.14.5
-  kernelspec:
-    display_name: bgdenv
-    language: python
-    name: python3
----
 
 # Additional Analysis Requested by Hassan
 
 ## Re-doing the analysis for Mawa Station
-
 
 This notebook replicates some of the analysis done for the Goalando station.
 
@@ -296,7 +282,7 @@ da_ra_m = ds_ra["Mawa"]
 da_ra_b = ds_ra["Bahadurabad"]
 ```
 
-### The GloFAS model 1-in-5 year RP.
+### The GloFAS model 1-in-5 year RP
 
 ```python
 rp_target = 5  # 1 in 5 year
@@ -386,7 +372,7 @@ detection_stats
 detection_stats["TP"] / len(padma_dates)
 ```
 
-#### Event in Padma given event in Jamuna
+#### Event in Padma given events in Jamuna
 
 ```python
 # Match the dates to events
@@ -403,7 +389,7 @@ detection_stats
 detection_stats["TP"] / len(jamuna_dates)
 ```
 
-#### Event in Jamuna given event in Padma
+#### Event in Jamuna given events in Padma
 
 ```python
 # Match the dates to events
@@ -421,7 +407,6 @@ detection_stats["TP"] / len(padma_dates)
 ```
 
 ## RP for FFWC and GloFAS Reanalysis
-
 
 ### GloFAS Reanalysis
 

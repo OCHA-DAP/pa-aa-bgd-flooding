@@ -1,16 +1,4 @@
----
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.14.5
-  kernelspec:
-    display_name: bgdenv
-    language: python
-    name: python3
----
+# Extracting GloFAS data for stations
 
 ```python
 %load_ext jupyter_black
