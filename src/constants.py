@@ -1,3 +1,4 @@
+import os
 from datetime import date
 from pathlib import Path
 
@@ -14,3 +15,7 @@ admin0 = codab.load(admin_level=0)
 geo_bounding_box = GeoBoundingBox.from_shape(admin0)
 
 reanalysis_end_date = date(2022, 12, 31)
+
+jamuna_ffwc_dir = (
+    Path(os.environ["OAP_DATA_DIR"]) / "private/exploration/bgd/ffwc"
+)

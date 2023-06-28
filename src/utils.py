@@ -215,3 +215,85 @@ def get_more_detection_stats(df: pd.DataFrame) -> pd.DataFrame:
     for q in ["TP", "FP", "FN"]:
         df[q] = df[q].astype("int")
     return df
+
+
+def read_in_ffwc() -> pd.DataFrame:
+    """
+    Read in multiple Bahadurabad FFWC files and make one dataframe
+    :return: Dataframe with Bahadurabad FFWC data
+    """
+    # Read in data from Sazzad that has forecasts
+    ffwc_wl_filename = "Bahadurabad_WL_forecast20172019.xlsx"
+    ffwc_leadtimes = [1, 2, 3, 4, 5]
+
+    # Need to combine the three sheets
+    df_ffwc_wl_dict = pd.read_excel(
+        constants.jamuna_ffwc_dir / ffwc_wl_filename,
+        sheet_name=None,
+        header=[1],
+        index_col="Date",
+    )
+    df_ffwc_wl = (
+        pd.concat(
+            [
+                df_ffwc_wl_dict["2017"],
+                df_ffwc_wl_dict["2018"],
+                df_ffwc_wl_dict["2019"],
+            ],
+            axis=0,
+        ).rename(
+            columns={
+                f"{leadtime*24} hrs": f"ffwc_{leadtime}day"
+                for leadtime in ffwc_leadtimes
+            }
+        )
+    ).drop(
+        columns=["Observed WL"]
+    )  # drop observed because we will use the mean later
+    # Convert date time to just date
+    df_ffwc_wl.index = df_ffwc_wl.index.floor("d")
+
+    # Then read in the older data (goes back much futher)
+    FFWC_RL_HIS_FILENAME = (
+        "2020-06-07 Water level data Bahadurabad Upper danger level.xlsx"
+    )
+    ffwc_rl_name = "{}/{}".format(
+        constants.jamuna_ffwc_dir, FFWC_RL_HIS_FILENAME
+    )
+    df_ffwc_wl_old = pd.read_excel(ffwc_rl_name, index_col=0, header=0)
+    df_ffwc_wl_old.index = pd.to_datetime(
+        df_ffwc_wl_old.index, format="%d/%m/%y"
+    )
+    df_ffwc_wl_old = df_ffwc_wl_old[["WL"]].rename(columns={"WL": "observed"})[
+        df_ffwc_wl_old.index < df_ffwc_wl.index[0]
+    ]
+    df_ffwc_wl = pd.concat([df_ffwc_wl_old, df_ffwc_wl])
+
+    # Read in the more recent file from Hassan
+    ffwc_full_data_filename = "SW46.9L_19-11-2020.xls"
+    df_ffwc_wl_full = (
+        pd.read_excel(
+            constants.jamuna_ffwc_dir / ffwc_full_data_filename,
+            index_col="DateTime",
+        ).rename(columns={"WL(m)": "observed"})
+    )[["observed"]]
+
+    # Mutliple observations per day. Find mean and std
+    df_ffwc_wl_full["date"] = df_ffwc_wl_full.index.date
+    df_ffwc_wl_full = (df_ffwc_wl_full.groupby("date").agg(["mean", "std"]))[
+        "observed"
+    ].rename(columns={"mean": "observed", "std": "obs_std"})
+    df_ffwc_wl_full.index = pd.to_datetime(df_ffwc_wl_full.index)
+
+    # Combine with first DF
+
+    df_ffwc_wl = pd.merge(
+        df_ffwc_wl_full[["obs_std"]],
+        df_ffwc_wl,
+        left_index=True,
+        right_index=True,
+        how="outer",
+    )
+    df_ffwc_wl.update(df_ffwc_wl_full, overwrite=False)
+
+    return df_ffwc_wl
