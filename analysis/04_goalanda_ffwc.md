@@ -3,12 +3,14 @@
 Looking at FFWC water level and discharge at Goalanda
 and comparing to GloFAS
 
-To run this notebook for another location, first add the location to `bgd.yaml` file with location name and coordinates then rerun pipeline.py to download and process GloFAS data needed for any further analysis.
+To run this notebook for another location,
+first add the location to `bgd.yaml` file with location name
+and coordinates then rerun pipeline.py to download and
+process GloFAS data needed for any further analysis.
 
 ```python
 %load_ext jupyter_black
 ```
-
 
 ```python
 from pathlib import Path
@@ -20,10 +22,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-os.chdir("..")
 from src import utils
 ```
-
 
 ```python
 # This is to avoid error with dask
@@ -32,11 +32,9 @@ from dask.distributed import Client
 c = Client(n_workers=os.cpu_count() - 2, threads_per_worker=1)
 ```
 
-
 ```python
 station = "Goalando"
 ```
-
 
 ```python
 # FFWC data
@@ -50,7 +48,6 @@ danger_level = 8.66
 danger_level_2 = danger_level + 0.5
 danger_level_3 = danger_level + 1  # m
 ```
-
 
 ```python
 # Look at discharge vs water level
@@ -71,7 +68,6 @@ ax.set_title("FFWC water level at Goalando, 2003-2022")
 # ax.axvline(danger_level, c="r")
 ```
 
-
 ```python
 min_duration = 3
 obs = df_ffwc["AVE_WL(m)"]
@@ -89,7 +85,6 @@ obs_dates = utils.get_dates_list_from_data_array(
 print(len(obs_dates))
 ```
 
-
 ```python
 # Read in reforecast and reanalysis
 ds_rf = utils.load_glofas_reforecast()
@@ -99,13 +94,11 @@ da_ra = ds_ra[station]
 da_rf = ds_rf[station]
 ```
 
-
 ```python
 # Take only the FFWC time
 df_glofas = da_ra.sel(time=slice(df_ffwc["DATE/TIME"][0], None)).to_dataframe()
 df_glofas
 ```
-
 
 ```python
 # Merge the two
@@ -119,7 +112,6 @@ df_comb = (
 df_comb
 ```
 
-
 ```python
 rp_target = 5  # 1 in 10 year
 rp_value = utils.get_return_period_function_analytical(
@@ -129,11 +121,9 @@ rp_value = utils.get_return_period_function_analytical(
 )(rp_target)
 ```
 
-
 ```python
 rp_value
 ```
-
 
 ```python
 # See if GloFAS captures FFWC "events"
@@ -177,18 +167,15 @@ df_station_stats = utils.get_more_detection_stats(df_station_stats)
 df_station_stats
 ```
 
-
 ```python
 obs_dates
 ```
-
 
 ```python
 model_dates
 ```
 
 Comparing reforecast vs reanalysis
-
 
 ```python
 # Interpolate the reforecast
@@ -201,7 +188,6 @@ da_rf_interp = da_rf.interp(
 # Get the median
 da_rf_med = da_rf_interp.median(axis=0)
 ```
-
 
 ```python
 # Loop through lead times
@@ -248,13 +234,11 @@ df_station_stats = utils.get_more_detection_stats(df_station_stats)
 df_station_stats
 ```
 
-
 ```python
 df_station_stats["leadtime"] = df_station_stats["leadtime"] / np.timedelta64(
     1, "D"
 )
 ```
-
 
 ```python
 ylim = {1.5: 36, 10: 10}
