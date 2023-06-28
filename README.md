@@ -4,11 +4,11 @@
 
 ## Background information
 
-Thie repository contains analysis for the 2023 
+Thie repository contains analysis for the 2023
 trigger, and for research to enhance the performance
-of the FFWC forecast. 
+of the FFWC forecast.
 
-For the 2020-2022 trigger analysis work see 
+For the 2020-2022 trigger analysis work see
 [here](https://github.com/OCHA-DAP/pa-anticipatory-action/tree/develop/analyses/bgd).
 
 ## Directory structure

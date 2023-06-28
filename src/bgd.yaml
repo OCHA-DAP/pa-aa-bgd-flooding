@@ -133,19 +133,22 @@ glofas:
     lon: 88.6500
   - name: Jamuneswari Badarganj
     lat: 25.65
-    lon: 89.05  
+    lon: 89.05
   - name: Teesta Dalia
     lat: 26.1500
-    lon: 89.0500 
+    lon: 89.0500
   - name: Ganges Pankha
     lat: 24.6500
     lon: 88.0500
   - name: Ganges Hardinge bridge
     lat: 24.06
-    lon: 89.03 
+    lon: 89.03
   - name: Mahananda Rohanpur
     lat: 24.8500
     lon: 88.2500
   - name: Punarbhaba Dinajpur
     lat: 25.5500
     lon: 88.5500
+  - name: Mawa
+    lat: 23.47216
+    lon: 90.25666
