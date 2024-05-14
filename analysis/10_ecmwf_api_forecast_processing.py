@@ -4,6 +4,7 @@ import geopandas as gpd
 import regionmask
 import xarray as xr
 from ecmwfapi import ECMWFDataServer
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -121,12 +122,16 @@ def ecmwf_data_download(start_date, end_date, basin_shp, output_dir, download_ty
             process_and_save(out_file_ens, ds)
 
 if __name__ == "__main__":
+    basin_dir = Path(os.environ["AA_DATA_DIR"]) / "public/raw/bgd/cod_ab/basin_shp/"
+    out_dir = Path(os.environ["AA_DATA_DIR"]) / "public/processed/bgd/ecmwf_tigge/"
     start_date = "2024-05-01"
     end_date = "2024-05-02"
-    basin_shp = gpd.read_file("shpfiles/gbm_shp_merged.gpkg")
-    output_dir = "rain_data"
+    basin_shp = gpd.read_file(basin_dir / "gbm_shp_merged.gpkg")
+    output_dir = out_dir / "rain_data"
     
     # Specify the type of data to download: "hres", "ens", or "both".
+    # hres is the 10-day single value forecast
+    # ens is the 15-day ensemble forecast. This script computes the median of the ensembles.
     download_type = "ens"  # Change this to "hres", "ens", or "both" as needed.
 
     ecmwf_data_download(start_date, end_date, basin_shp, output_dir, download_type)
