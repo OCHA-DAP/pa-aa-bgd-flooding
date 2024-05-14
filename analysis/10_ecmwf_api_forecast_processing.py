@@ -17,7 +17,7 @@ def ecmwf_data_download(start_date, end_date, basin_shp, output_dir, download_ty
         end_date (str): End date in "YYYY-MM-DD" format.
         basin_shp (str): Path to the basin shapefile.
         output_dir (str): Directory to save the downloaded data.
-        download_type (str): Type of data to download: 'hres', 'ens', or 'both'.
+        download_type (str): Type of data to download: "hres", "ens", or "both".
 
     Returns:
         None
@@ -38,7 +38,7 @@ def ecmwf_data_download(start_date, end_date, basin_shp, output_dir, download_ty
 
     def process_and_save(out_file, ds):
         mask = regionmask.mask_geopandas(basin_shp, ds.longitude.values, ds.latitude.values)
-        mask = mask.rename({'lon': 'longitude', 'lat': 'latitude'})
+        mask = mask.rename({"lon": "longitude", "lat": "latitude"})
         basin_ds = ds.where(mask == 0, drop=True)
         logger.info(f"Writing {out_file}")
         basin_ds.to_netcdf(out_file)
@@ -49,7 +49,7 @@ def ecmwf_data_download(start_date, end_date, basin_shp, output_dir, download_ty
                 os.remove(file)
                 logger.info(f"Removed file: {file}")
 
-    if download_type in ['hres', 'both']:
+    if download_type in ["hres", "both"]:
         out_file_hres = os.path.join(output_dir, f"bgd_hres_forecast_{end_date}.nc")
         retrieve_data(out_file_hres, {
             "class": "ti",
@@ -68,12 +68,12 @@ def ecmwf_data_download(start_date, end_date, basin_shp, output_dir, download_ty
         })
 
         if os.path.exists(out_file_hres):
-            ds_hres = xr.open_dataset(out_file_hres, engine='cfgrib')
+            ds_hres = xr.open_dataset(out_file_hres, engine="cfgrib")
             process_and_save(out_file_hres, ds_hres)
             ds_hres.close()
             cleanup_files(out_file_hres)
 
-    if download_type in ['ens', 'both']:
+    if download_type in ["ens", "both"]:
         out_file_cf = os.path.join(output_dir, f"bgd_ens_forecast_cf_{end_date}.nc")
         out_file_pf = os.path.join(output_dir, f"bgd_ens_forecast_pf_{end_date}.nc")
         out_file_ens = os.path.join(output_dir, f"bgd_ens_forecast_{end_date}.nc")
@@ -112,8 +112,8 @@ def ecmwf_data_download(start_date, end_date, basin_shp, output_dir, download_ty
         })
 
         if os.path.exists(out_file_cf) and os.path.exists(out_file_pf):
-            ds_cf = xr.open_dataset(out_file_cf, engine='cfgrib')
-            ds_pf = xr.open_dataset(out_file_pf, engine='cfgrib')
+            ds_cf = xr.open_dataset(out_file_cf, engine="cfgrib")
+            ds_pf = xr.open_dataset(out_file_pf, engine="cfgrib")
             ds = xr.concat([ds_cf, ds_pf], dim="number").median(dim="number")
             ds_cf.close()
             ds_pf.close()
@@ -126,7 +126,7 @@ if __name__ == "__main__":
     basin_shp = gpd.read_file("shpfiles/gbm_shp_merged.gpkg")
     output_dir = "rain_data"
     
-    # Specify the type of data to download: 'hres', 'ens', or 'both'.
-    download_type = 'both'  # Change this to 'hres', 'ens', or 'both' as needed.
+    # Specify the type of data to download: "hres", "ens", or "both".
+    download_type = "ens"  # Change this to "hres", "ens", or "both" as needed.
 
     ecmwf_data_download(start_date, end_date, basin_shp, output_dir, download_type)
