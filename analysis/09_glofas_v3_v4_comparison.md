@@ -1,3 +1,19 @@
+
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.3'
+      jupytext_version: 1.15.1
+  kernelspec:
+    display_name: bgdenv
+    language: python
+    name: python3
+---
+
+
 # Comparison of GloFAS v3 and v4 for BGD
 
 - Comparing bias between the two
@@ -14,6 +30,8 @@ import matplotlib.backends.backend_pdf
 import matplotlib.pyplot as plt
 import numpy as np
 
+import pandas as pd
+
 from src import utils
 ```
 
@@ -22,7 +40,6 @@ from src import utils
 import xarray as xr
 import glob
 ```
-
 
 ```python
 ds_ra_v4 = utils.load_glofas_reanalysis()
@@ -46,6 +63,16 @@ v3_files = glob.glob(str(nc_path) + "/bgd_cems-glofas-historical_[0-9]*.nc")
 ```python
 ds_ra_v3 = xr.DataArray()
 v3_files.sort()
+=======
+```python
+ds_ra_v3 = xr.DataArray()
+```
+
+```python
+v3_files.sort()
+```
+
+```python
 for i in v3_files:
     file = xr.open_dataset(i)
     if i == v3_files[0]:
@@ -217,7 +244,6 @@ plt.legend(bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
 ax.set_title("Goalando v3 and v4 GloFAS")
 ```
 
-
 ```python
 fig, ax = plt.subplots()
 da_ra_b_v3.plot(color="red")
@@ -301,3 +327,4 @@ baha_v4 = ds_rf_v4.sel(latitude=25.125, longitude=89.675, method="nearest")
 ```
 
 So the event in Aug 2023 was not caught by any of the versions.
+
